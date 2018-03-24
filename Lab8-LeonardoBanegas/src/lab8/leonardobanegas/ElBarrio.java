@@ -13,17 +13,15 @@ import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
 public class ElBarrio extends javax.swing.JFrame {
-    
+
     Administrador adminerick = new Administrador("erick123", "321kcire");
     Clientes cllog;
-    private ArrayList<Clientes> clientes = new ArrayList();
-    private ArrayList<Producto> productos = new ArrayList();
     Dba db = new Dba("./base.accdb");
-    
+
     public ElBarrio() {
         initComponents();
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -84,6 +82,10 @@ public class ElBarrio extends javax.swing.JFrame {
         listacompras = new javax.swing.JList<>();
         jLabel18 = new javax.swing.JLabel();
         btnCheckOut = new javax.swing.JButton();
+        DialogFactura = new javax.swing.JDialog();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        taFactura = new javax.swing.JTextArea();
+        jLabel19 = new javax.swing.JLabel();
         btnIngresar = new javax.swing.JButton();
 
         FrameRegistro.setPreferredSize(new java.awt.Dimension(500, 500));
@@ -431,6 +433,11 @@ public class ElBarrio extends javax.swing.JFrame {
         jLabel18.setText("Compras");
 
         btnCheckOut.setText("CheckOut");
+        btnCheckOut.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnCheckOutMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout FrameClienteLayout = new javax.swing.GroupLayout(FrameCliente.getContentPane());
         FrameCliente.getContentPane().setLayout(FrameClienteLayout);
@@ -488,7 +495,41 @@ public class ElBarrio extends javax.swing.JFrame {
                         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnCheckOut)))
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addContainerGap(43, Short.MAX_VALUE))
+        );
+
+        DialogFactura.setPreferredSize(new java.awt.Dimension(500, 500));
+        DialogFactura.setResizable(false);
+        DialogFactura.setSize(new java.awt.Dimension(500, 500));
+
+        taFactura.setColumns(20);
+        taFactura.setRows(5);
+        jScrollPane5.setViewportView(taFactura);
+
+        jLabel19.setText("Factura");
+
+        javax.swing.GroupLayout DialogFacturaLayout = new javax.swing.GroupLayout(DialogFactura.getContentPane());
+        DialogFactura.getContentPane().setLayout(DialogFacturaLayout);
+        DialogFacturaLayout.setHorizontalGroup(
+            DialogFacturaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(DialogFacturaLayout.createSequentialGroup()
+                .addGroup(DialogFacturaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(DialogFacturaLayout.createSequentialGroup()
+                        .addGap(28, 28, 28)
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 429, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(DialogFacturaLayout.createSequentialGroup()
+                        .addGap(211, 211, 211)
+                        .addComponent(jLabel19)))
+                .addContainerGap(43, Short.MAX_VALUE))
+        );
+        DialogFacturaLayout.setVerticalGroup(
+            DialogFacturaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, DialogFacturaLayout.createSequentialGroup()
+                .addContainerGap(46, Short.MAX_VALUE)
+                .addComponent(jLabel19)
+                .addGap(35, 35, 35)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(87, 87, 87))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -530,7 +571,6 @@ public class ElBarrio extends javax.swing.JFrame {
         String numidentidad = tfUsuarioNumIdentidad.getText();
         int saldo = Integer.parseInt(tfUsuarioSaldo.getText());
         Clientes cliente = new Clientes(nombre, cuenta, contrasena, numidentidad, saldo);
-        clientes.add(cliente);
         DefaultListModel modelo = (DefaultListModel) ListaClientes.getModel();
         modelo.addElement(cliente);
         ListaClientes.setModel(modelo);
@@ -600,11 +640,10 @@ public class ElBarrio extends javax.swing.JFrame {
         DateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
         Date fechacad = jDateChooser1.getDate();
         String fechastring = formato.format(jDateChooser1.getDate());
-        
+
         db.conectar();
         System.out.println("conecto1");
         Producto prod = new Producto(nombre, cantidad, precio, fechacad);
-        productos.add(prod);
         DefaultListModel modelo = (DefaultListModel) ListaProductos.getModel();
         modelo.addElement(prod);
         ListaProductos.setModel(modelo);
@@ -615,7 +654,7 @@ public class ElBarrio extends javax.swing.JFrame {
                     + "VALUES (" + cantidad + ", " + precio + ", '" + fechastring + "', '" + nombre + "' )");
             db.commit();
             System.out.println("agrego");
-            
+
         } catch (SQLException sqle) {
             sqle.printStackTrace();
         }
@@ -745,7 +784,7 @@ public class ElBarrio extends javax.swing.JFrame {
                     int saldo = cllog.getSaldodisponible();
                     cllog.setSaldodisponible(saldo - prod.getPrecio());
                     JOptionPane.showMessageDialog(FrameCliente, "Producto Comprado");
-                    
+
                     db.conectar();
                     try {
                         db.query.execute("update Productos set Cantidad='" + finalcantidad + "' where Nombre='" + prod.getNombre() + "'");
@@ -832,7 +871,17 @@ public class ElBarrio extends javax.swing.JFrame {
         FrameIngresar.setVisible(true);
         FrameIngresar.setLocationRelativeTo(null);
     }//GEN-LAST:event_jButton2MouseClicked
-    
+
+    private void btnCheckOutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCheckOutMouseClicked
+        DialogFactura.setVisible(true);
+        taFactura.setText("Nombre Cliente: " + cllog.getNombre() + "\n"
+                + "Numero de Identidad: " + cllog.getNumidentidad() + "\n"
+                + "Productos: " + cllog.getProductos() + "\n"
+                + "Subtotal: No pude perdon Erick :(\n"
+                + "Impuesto: Tampoco :( \n"
+                + "Total: Tampocoooo :( \n");
+    }//GEN-LAST:event_btnCheckOutMouseClicked
+
     public static void main(String args[]) {
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -865,6 +914,7 @@ public class ElBarrio extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Contraseña;
+    private javax.swing.JDialog DialogFactura;
     private javax.swing.JMenuItem Eliminar;
     private javax.swing.JMenuItem EliminarCliente;
     private javax.swing.JFrame FrameAdmin;
@@ -897,6 +947,7 @@ public class ElBarrio extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -909,7 +960,9 @@ public class ElBarrio extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JList<String> listacompras;
+    private javax.swing.JTextArea taFactura;
     private javax.swing.JTextField tfCantidadaComprar;
     private javax.swing.JTextField tfIngresarContrasena;
     private javax.swing.JTextField tfIngresarCuenta;
