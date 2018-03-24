@@ -3,6 +3,7 @@ package lab8.leonardobanegas;
 import java.util.ArrayList;
 
 public class Clientes {
+
     private String nombre;
     private String cuenta;
     private String contrasena;
@@ -71,7 +72,7 @@ public class Clientes {
 
     @Override
     public String toString() {
-        return "Clientes{" + "nombre=" + nombre + ", cuenta=" + cuenta + ", contrasena=" + contrasena + ", productos=" + productos + ", numidentidad=" + numidentidad + ", saldodisponible=" + saldodisponible + '}';
+        return nombre + ", cuenta=" + cuenta + ", numidentidad=" + numidentidad + ", saldodisponible=" + saldodisponible + '}';
     }
-    
+
 }
